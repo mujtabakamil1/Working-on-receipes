@@ -3,6 +3,7 @@ from .models import *
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate , login
 
 from django.contrib import messages
 # Create your views here.
@@ -74,7 +75,30 @@ def update_receipe(request, id):
 
 
 def login_page(request):
+    if request.method == "POST":
+       
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if not User.objects.filter(username = username).exists():
+            messages.error(request,'Invalid Username')
+            return redirect('/login/')
+        
+        user = authenticate(username=username,password = password)
+
+        if user is None:
+             messages.error(request,'Password')
+             return redirect('/login/')
+        else:
+            login(request,user)
+            return redirect('/receipes/')
+        
+
+
+
+
     return render(request,'login.html')
+
+
 
 def register(request):
 
