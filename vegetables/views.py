@@ -1,14 +1,15 @@
 from django.shortcuts import render
 from .models import *
 from django.shortcuts import redirect
-from django.http import HttpResponse
+from django.http import *
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate , login
+from django.contrib.auth import authenticate , login , logout
+from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
 # Create your views here.
 
-
+@login_required(login_url='/login/')
 def receipes(request):
     if request.method == "POST":
         data = request.POST
@@ -83,14 +84,15 @@ def login_page(request):
             messages.error(request,'Invalid Username')
             return redirect('/login/')
         
-        user = authenticate(username=username,password = password)
+        user = authenticate(request ,username = username,password = password)
 
-        if user is None:
-             messages.error(request,'Password')
-             return redirect('/login/')
+        if user:
+              login(request,user)
+              return redirect('/receipes/')
         else:
-            login(request,user)
-            return redirect('/receipes/')
+          messages.error(request,'incorrect password')
+          return redirect('/login/')
+        
         
 
 
@@ -98,6 +100,9 @@ def login_page(request):
 
     return render(request,'login.html')
 
+def logout_page(request):
+    logout(request)
+    return redirect('/login/')
 
 
 def register(request):
@@ -121,13 +126,12 @@ def register(request):
            first_name = first_name,
            last_name = last_name,
            username = username,
-          
-        )
+                 )
 
         user.set_password(password)
         user.save()
 
-        messages.info(request, "Account created succesfully")
+        messages.success(request, "Account created succesfully")
 
         return redirect('/register/')
 
