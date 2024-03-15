@@ -18,8 +18,8 @@ class Department(models.Model):
     def __str__(self) -> str:
         return self.Department
     class Meta:
-        #ordering = ['Department']
-        ordering = ['-Department'] # Descending order
+        ordering = ['Department']
+        #ordering = ['-Department'] # Descending order
 
 class StudentID(models.Model):
     student_id = models.CharField(max_length = 100)
