@@ -33,6 +33,8 @@ urlpatterns = [
     path('login/',login_page , name="login_page"),
     path('register/',register , name="register"),
 
+
+    # Logout Path
     path('logout/',logout_page,name="logout_page"),
 
 
